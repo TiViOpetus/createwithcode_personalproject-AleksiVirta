@@ -4,20 +4,34 @@ using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
 {
-    [SerializeField] private float speed;
-    private Rigidbody2D body;
+    private Rigidbody2D rb;
+    public float speed;
+    public float jumpForce;
+    private float moveInput;
 
-    
-    private void Awake()
+    private bool isGrounded;
+    public Transform feetpos;
+    public float checkRadius;
+    public LayerMask whatIsGround;
+
+    void Start()
     {
-        body = GetComponent<Rigidbody2D>();
+        rb = GetComponent<Rigidbody2D>();
     }
 
-    
-    private void Update()
+    void FixedUpdate()
     {
+        moveInput = Input.GetAxisRaw("Horizontal");
+        rb.velocity = new Vector2(moveInput * speed, rb.velocity.y);    
+    }
 
-        if (Input.GetKey(KeyCode.Space))
-            body.velocity = new Vector2(body.velocity.x, speed);
+    void Update()
+    {
+        isGrounded = Physics2D.OverlapCircle(feetpos.position, checkRadius, whatIsGround);
+
+        if(isGrounded == true && Input.GetKeyDown(KeyCode.Space)){
+            rb.velocity = Vector2.up * jumpForce;
+        }
+        
     }
 }
